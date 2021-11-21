@@ -43,44 +43,39 @@ PAGES = {
 
 def main() -> None:
 	"""run app"""
-	if True:
-		sidebar = st.sidebar
-		sidebar.markdown('''
-		⬇️ Scroll down for more options, and mouse over the ❔ icons, they are  
-		helpful!
-		''')
-		new_symbols = components.FormTextInput(
-			form_key='new_symbols_form',
-			container=sidebar,
-			title='Symbols Input',
-			text_input_description='Or enter ticker symbols below',
-			uploader_description='Upload a text file',
-			uploader_help_txt='File must be .txt format (for the layperson using ' +
-					'Windows, this means open up notepad...open the start menu, ' +
-					'click Windows Accessories, then click Notepad...' +
-					'for Mac, open up in TextEdit however you do that in Mac...' +
-					'for Linux, well, you should know what to do) and type only ' +
-					'one symbol per line. After uploading the file, click the ' +
-					'Add symbols button and data from Yahoo! Finance will be '+
-					'retrieved. This is not case sensitive. Aapl, aapl, and AaPL ' +
-					'will all be read as AAPL.',
-			submit_button_text='Add symbols to session',
-			text_input_help_txt='Type symbols into the box below, ' +
-					'separating each with a space, like this: AAPL AMZN GOOG. ' +
-					'Click the button and data from Yahoo! Finance will be ' +
-					'retrieved. This is not case sensitive. Aapl, aapl, and AaPL ' +
-					'will all be read as AAPL.'
+	sidebar = st.sidebar
+	sidebar.markdown('''
+	⬇️ Scroll down for more options, mouse over/tap the ❔ icons for help
+	''')
+	new_symbols = components.FormTextInput(
+		form_key='new_symbols_form',
+		container=sidebar,
+		title='Symbols Input',
+		text_input_description='Or enter ticker symbols below',
+		uploader_description='Upload a text file',
+		uploader_help_txt='File must be .txt format (if you are using ' +
+				'Windows, this means open up Notepad...for Mac, TextEdit) ' +
+				'and type only one symbol per line. After uploading the file, ' +
+				'click the "Add symbols" button and data from Yahoo! Finance ' +
+				'will be retrieved. This is not case sensitive. Aapl, aapl, ' +
+				'and AaPL will all be read as AAPL.',
+		submit_button_text='Add symbols to session',
+		text_input_help_txt='Type symbols into the box below, ' +
+				'separating each with a space, like this: AAPL AMZN GOOG. ' +
+				'Click the button and data from Yahoo! Finance will be ' +
+				'retrieved. This is not case sensitive. Aapl, aapl, and AaPL ' +
+				'will all be read as AAPL.'
+	)
+	if new_symbols.parsed_input:
+		data.get_data(
+			sorted(new_symbols.parsed_input),
+			new_symbols.progressbar_container,
+			new_symbols.progressmsg_container,
+			STATE
 		)
-		if new_symbols.parsed_input:
-			data.get_data(
-				sorted(new_symbols.parsed_input),
-				new_symbols.progressbar_container,
-				new_symbols.progressmsg_container,
-				STATE
-			)
-			STATE.asset_types = utils.get_all_attributes('asset_type', STATE)
-			STATE.sectors = utils.get_all_attributes('sector', STATE)
-			STATE.industries = utils.get_all_attributes('industry', STATE)
+		STATE.asset_types = utils.get_all_attributes('asset_type', STATE)
+		STATE.sectors = utils.get_all_attributes('sector', STATE)
+		STATE.industries = utils.get_all_attributes('industry', STATE)
 	check_all = sidebar.checkbox('Select All Symbols')
 	selected_symbols_container = sidebar.empty()
 	default_symbols = []
