@@ -10,7 +10,7 @@ import sys
 import streamlit as st
 
 st.set_page_config(
-	page_title="Davetime's Stocktime",
+	page_title="Stock Research",
 	page_icon='📊',
 	layout='wide',
 	initial_sidebar_state='expanded',
@@ -82,18 +82,52 @@ def main() -> None:
 			STATE.sectors = utils.get_all_attributes('sector', STATE)
 			STATE.industries = utils.get_all_attributes('industry', STATE)
 	check_all = sidebar.checkbox('Select All Symbols')
-	selected_symbols = sidebar.multiselect(
-		'Select symbols to view', options=STATE.symbols
+	selected_symbols_container = sidebar.empty()
+	default_symbols = []
+	if check_all:
+		default_symbols = STATE.symbols
+	else:
+		selected_asset_type = sidebar.multiselect(
+			'Filter by asset type', options=STATE.asset_types
+		)
+		default_asset_type = []
+		if selected_asset_type:
+			for a in selected_asset_type:
+				for s in STATE.symbols:
+					if getattr(STATE.symbols_data[s], 'asset_type') == a:
+						default_asset_type.append(s)
+		selected_sector = sidebar.multiselect(
+			'Filter by sector', options=STATE.sectors
+		)
+		default_sector = []
+		if selected_sector:
+			for a in selected_sector:
+				for s in STATE.symbols:
+					if getattr(STATE.symbols_data[s], 'sector') == a:
+						default_sector.append(s)
+		selected_industry = sidebar.multiselect(
+			'Filter by industry', options=STATE.industries
+		)
+		default_industry = []
+		if selected_industry:
+			for a in selected_industry:
+				for s in STATE.symbols:
+					if getattr(STATE.symbols_data[s], 'industry') == a:
+						default_industry.append(s)
+		if default_asset_type:
+			default_symbols = default_asset_type
+		if default_sector:
+			default_symbols = sorted(list(
+				set(default_symbols).intersection(default_sector)
+			))
+		if default_industry:
+			default_symbols = sorted(list(
+				set(default_symbols).intersection(default_industry)
+			))
+	selected_symbols = selected_symbols_container.multiselect(
+		'Select symbols to view', options=STATE.symbols, default=default_symbols
 	)
-	selected_asset_type = sidebar.multiselect(
-		'Filter by asset type', options=STATE.asset_types
-	)
-	selected_sector = sidebar.multiselect(
-		'Filter by sector', options=STATE.sectors
-	)
-	selected_industry = sidebar.multiselect(
-		'Filter by industry', options=STATE.industries
-	)
+
 	selected_page = sidebar.radio('Selected Page', options=PAGES.keys())
 	sidebar.markdown('''
 	##### {} symbols in session using {} of RAM
