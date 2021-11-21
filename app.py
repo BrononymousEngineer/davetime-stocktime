@@ -133,12 +133,12 @@ def main() -> None:
 		])))
 	)
 	st.markdown('''
-	# IN DEVELOPMENT
+	# IN PROGRESS
 		
-		- the sidebar works, except for filtering
+		- the sidebar mostly works
 		- the filtering system is currently being worked on
-		- after that pages will be written
-		- the session state is shown below for development purposes
+		- then pages will be created
+		
 	### Session State
 	''')
 	st.write(STATE)
