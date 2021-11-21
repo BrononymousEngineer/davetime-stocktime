@@ -104,7 +104,7 @@ def main() -> None:
 		])))
 	)
 	st.markdown('''
-	# APP IN DEVELOPMENT
+	# IN DEVELOPMENT
 		
 		- the sidebar works, except for filtering
 		- the filtering system is currently being worked on
