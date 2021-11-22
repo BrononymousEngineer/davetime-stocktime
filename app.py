@@ -1,6 +1,4 @@
-"""Try to come up with a method of using streamlit components in the same way
-as I did with dash.
-"""
+"""Main app"""
 import components
 import data
 import utils
@@ -9,6 +7,9 @@ import sys
 
 import streamlit as st
 
+# ------------------------------------------------------------------------------
+# Set page configuration
+# ------------------------------------------------------------------------------
 st.set_page_config(
 	page_title="Stocks",
 	page_icon='📊',
@@ -17,7 +18,9 @@ st.set_page_config(
 	menu_items={'About': 'All data comes from Yahoo! Finance.'}
 )
 
+# ------------------------------------------------------------------------------
 # Initialize session state
+# ------------------------------------------------------------------------------
 STATE: st.session_state = st.session_state
 if not hasattr(STATE, 'symbols'):
 	STATE.symbols = []
@@ -30,7 +33,9 @@ if not hasattr(STATE, 'industries'):
 if not hasattr(STATE, 'asset_types'):
 	STATE.asset_types = []
 
-
+# ------------------------------------------------------------------------------
+# Initialize pages
+# ------------------------------------------------------------------------------
 PAGES = {
 	'Overview': template.Page,
 	'Fundamental': template.Page,
@@ -103,7 +108,7 @@ def main() -> None:
 		'Select symbols to view', options=STATE.symbols, default=default_symbols
 	)
 	# --------------------------------------------------------------------------
-	# Select page
+	# Run selected page
 	# --------------------------------------------------------------------------
 	selected_page = sidebar.radio('Selected Page', options=PAGES.keys())
 	# --------------------------------------------------------------------------
@@ -118,7 +123,7 @@ def main() -> None:
 		])))
 	)
 	# --------------------------------------------------------------------------
-	# TEMPORARY PAGE
+	# Temporary dev info
 	# --------------------------------------------------------------------------
 	st.markdown('''
 	# DEV INFO

@@ -5,7 +5,9 @@ from typing import List
 
 
 def signify(n, unit_type: str = 'bytes'):
-	"""Human readable number to largest significance"""
+	"""Human readable number to largest significance.
+	Kinda stole this from stackoverflow.
+	"""
 	SIGNIFICANCE = {
 		'money': ['', 'k', 'M', 'B', 'T'],
 		'bytes': [' bytes', 'kB', 'MB', 'GB', 'TB']

@@ -60,15 +60,23 @@ class SymbolData:
 		self.short_name = quote_type.get('shortName', PLACEHOLDERS[str])
 		self.long_name = quote_type.get('longName', PLACEHOLDERS[str])
 
-	def get_option_chain(self) -> None:
-		"""Option chain"""
-		self.option_chain = self.ticker_obj.option_chain.loc[self.symbol]
+	def get_fundamental_data(self) -> None:
+		"""Fundamental data"""
+		pass
 
 	def get_historical_prices(self) -> None:
 		"""Historical price data"""
 		self.historical_prices = self.ticker_obj.history(
 			period='max'
 		).loc[self.symbol]
+
+	def get_analyst_data(self) -> None:
+		"""Analyst info"""
+		pass
+
+	def get_option_chain(self) -> None:
+		"""Option chain"""
+		self.option_chain = self.ticker_obj.option_chain.loc[self.symbol]
 
 
 def get_data(
@@ -98,7 +106,7 @@ def get_data(
 	successful = []
 	info_container = m_cont.empty()
 	progress_cont = p_cont.empty()
-	progress_vals = _update_progress(3*len(symbols))
+	progress_vals = _update_progress(5*len(symbols))
 	progress = progress_cont.progress(0)
 	for s in symbols:
 		symbol_obj = SymbolData(s)
@@ -106,8 +114,12 @@ def get_data(
 		try:
 			update_progress(f'Getting {s} metadata')
 			symbol_obj.get_metadata()
+			update_progress(f'Getting {s} fundamentals')
+			symbol_obj.get_fundamental_data()
 			update_progress(f'Getting {s} price history')
 			symbol_obj.get_historical_prices()
+			update_progress(f'Getting {s} analyst info')
+			symbol_obj.get_analyst_data()
 			update_progress(f'Getting {s} option chain')
 			symbol_obj.get_option_chain()
 			successful.append(s)
