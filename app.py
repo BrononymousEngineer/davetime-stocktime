@@ -113,16 +113,17 @@ def main() -> None:
 	if select_all:
 		default_symbols = STATE.symbols
 	else:
-		sector_industry_structure = {
-			'radio': ['Sectors', 'Industries'],
-			'Sectors': STATE.sectors,
-			'Industries': STATE.industries
-		}
-		default_symbols = components.SymbolsFilter(
-			filter_container,
-			sector_industry_structure,
-			description='Filter by sector/industry'
-		).output
+		if STATE.sectors and STATE.industries:
+			sector_industry_structure = {
+				'radio': ['Sectors', 'Industries'],
+				'Sectors': STATE.sectors,
+				'Industries': STATE.industries
+			}
+			default_symbols = components.SymbolsFilter(
+				filter_container,
+				sector_industry_structure,
+				description='Filter by sector/industry'
+			).output
 
 	selected_symbols = selected_symbols_container.multiselect(
 		'Select symbols to view', options=STATE.symbols, default=default_symbols
