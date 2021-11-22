@@ -1,6 +1,7 @@
 """Useful functions"""
 import math
 import streamlit as st
+from typing import List
 
 
 def signify(n, unit_type: str = 'bytes'):
@@ -27,11 +28,9 @@ def signify(n, unit_type: str = 'bytes'):
 	)
 
 
-def get_all_attributes(attr_type: str, STATE: st.session_state) -> list:
-	"""Get all values of a certain attribute of the symbol objects in session"""
-	types = ['sector', 'industry', 'asset_type']
-	if attr_type not in types:
-		raise ValueError(f'attr_type "{attr_type}" not in {types}')
-	return sorted(list(set([
-		getattr(STATE.symbols_data[s], attr_type) for s in STATE.symbols
-	])))
+def get_all_attributes(attrs: List[str], STATE: st.session_state) -> List[list]:
+	"""Get all values of certain attributes of all symbols in session"""
+	return [
+		sorted(list({getattr(s, attr) for s in STATE.symbols_data.values()}))
+		for attr in attrs
+	]

@@ -82,9 +82,11 @@ def main() -> None:
 			new_symbols.progressmsg_container,
 			STATE
 		)
-		STATE.asset_types = utils.get_all_attributes('asset_type', STATE)
-		STATE.sectors = utils.get_all_attributes('sector', STATE)
-		STATE.industries = utils.get_all_attributes('industry', STATE)
+		# EXTRACT METADATA FOR FILTERING
+		STATE.asset_types, STATE.sectors, STATE.industries, STATE.countries = \
+		utils.get_all_attributes([
+			'asset_type', 'sector', 'industry', 'country'
+		], STATE)
 	# --------------------------------------------------------------------------
 	# Symbols filter
 	# --------------------------------------------------------------------------
