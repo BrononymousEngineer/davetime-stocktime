@@ -2,7 +2,7 @@
 import streamlit as st
 
 
-class FormTextInput:
+class SymbolsInput:
 	"""Form containing a text_input box and a button."""
 
 	def __init__(

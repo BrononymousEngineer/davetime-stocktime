@@ -68,7 +68,7 @@ def main() -> None:
 	
 	A third option will be crawling through related symbols on Yahoo
 	''')
-	new_symbols = components.FormTextInput(
+	new_symbols = components.SymbolsInput(
 		form_key='new_symbols_form',
 		container=input_container,
 		# title='Symbols Input',
@@ -105,6 +105,10 @@ def main() -> None:
 	# --------------------------------------------------------------------------
 	filter_container = sidebar.expander('Symbols Filter')
 	select_all = sidebar.checkbox('Select All Symbols')
+
+	filter_container.markdown('''
+	Currently being worked on
+	''')
 
 	selected_symbols_container = sidebar.empty()
 
