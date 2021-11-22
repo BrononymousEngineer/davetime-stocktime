@@ -121,7 +121,9 @@ def main() -> None:
 	# TEMPORARY PAGE
 	# --------------------------------------------------------------------------
 	st.markdown('''
-	# IN PROGRESS
+	# DEV INFO
+	
+	For now this page only displays useful information for development.
 		
 		- symbols input works 100%
 		- filtering not yet implemented
@@ -130,6 +132,9 @@ def main() -> None:
 	### Session State
 	''')
 	st.write(STATE)
+	st.markdown('''
+	### Ignore the error below
+	''')
 	PAGES[selected_page](selected_symbols, STATE).runpage()
 
 
