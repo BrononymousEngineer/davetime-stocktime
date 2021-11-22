@@ -60,12 +60,20 @@ def main() -> None:
 	# Symbols input/get data
 	# --------------------------------------------------------------------------
 	input_container = sidebar.expander('Symbols Input')
+	input_container.markdown('''
+	There are currently two ways to load data.  
+	
+	1) Upload a text file of symbols  
+	2) Manually type symbols  
+	
+	A third option will be crawling through related symbols on Yahoo
+	''')
 	new_symbols = components.FormTextInput(
 		form_key='new_symbols_form',
 		container=input_container,
 		# title='Symbols Input',
-		text_input_description='Or enter ticker symbols below',
-		uploader_description='Upload a text file',
+		text_input_description='2) Enter ticker symbols below',
+		uploader_description='1) Upload a text file',
 		uploader_help_txt=''' 
 			File must be .txt format (if you are using Windows, this means open 
 			up Notepad...for Mac, TextEdit) and type only one symbol per line. 
@@ -74,7 +82,7 @@ def main() -> None:
 			Aapl, aapl, and AaPL will all be read as AAPL.''',
 		submit_button_text='Add symbols to session',
 		text_input_help_txt=''' 
-			'Type symbols into the box below, separating each with a space, 
+			Type symbols into the box below, separating each with a space, 
 			like this: AAPL AMZN GOOG. Click the button and data from Yahoo! 
 			Finance will be retrieved. This is not case sensitive. Aapl, aapl, 
 			and AaPL will all be read as AAPL.'''
@@ -130,7 +138,7 @@ def main() -> None:
 	
 	For now this page only displays useful information for development.
 		
-		- symbols input works 100%
+		- symbols input works, except for Yahoo crawler
 		- filtering not yet implemented
 		- pages not yet implemented
 		
