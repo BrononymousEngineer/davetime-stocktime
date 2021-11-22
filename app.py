@@ -107,15 +107,22 @@ def main() -> None:
 	filter_container = sidebar.expander('Symbols Filter')
 	select_all = sidebar.checkbox('Select All Symbols')
 
-	filter_container.markdown('''
-	Currently being worked on
-	''')
-
 	selected_symbols_container = sidebar.empty()
 
 	default_symbols = []
 	if select_all:
 		default_symbols = STATE.symbols
+	else:
+		sector_industry_structure = {
+			'radio': ['Sectors', 'Industries'],
+			'Sectors': STATE.sectors,
+			'Industries': STATE.industries
+		}
+		default_symbols = components.SymbolsFilter(
+			filter_container,
+			sector_industry_structure,
+			description='Filter by sector/industry'
+		).output
 
 	selected_symbols = selected_symbols_container.multiselect(
 		'Select symbols to view', options=STATE.symbols, default=default_symbols

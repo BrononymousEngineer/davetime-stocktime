@@ -122,7 +122,7 @@ def get_data(
 			symbol_obj.get_analyst_data()
 			update_progress(f'Getting {s} option chain')
 			symbol_obj.get_option_chain()
-			successful.append(s)
+			# successful.append(s)
 		except Exception as e:
 			failed = True
 			print(f'getdata err {s}: {e}')
@@ -133,10 +133,11 @@ def get_data(
 
 	info_container.empty()
 	progress_cont.empty()
+
 	STATE.symbols = sorted(STATE.symbols)
 	STATE.symbols_data = {
 		k: STATE.symbols_data[k]
 		for k in sorted(list(STATE.symbols_data.keys()))
 	}
 
-	return successful
+	# return successful

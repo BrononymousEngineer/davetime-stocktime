@@ -13,10 +13,10 @@ class SymbolsInput:
 			title_importance: int = 1,
 			text_input_description: str = None,
 			text_input_help_txt: str = None,
-			text_input_separator: str = ' ',
+			text_input_separator: str = ' ',  # can delete
 			uploader_description: str = None,
 			uploader_help_txt: str = None,
-			uploader_separator: str = '\\n',
+			uploader_separator: str = '\\n',  # can delete
 			submit_button_text: str = None,
 			submit_button_clears: bool = True,
 			parsed_case: str = 'upper'
@@ -65,6 +65,17 @@ class SymbolsInput:
 			]
 
 
-class SymbolSelection:
-	"""selected symbols"""
-	pass
+class SymbolsFilter:
+	"""Component with radio buttons and a dropdown."""
+	def __init__(
+		self,
+		container: st.container,
+		struct: dict,
+		description: str = ''
+	):
+		self.radio = container.radio(description, struct['radio'])
+		st.write(struct)
+		self.dropdown = container.multiselect(
+			f'Select {self.radio}', options=struct[self.radio]
+		)
+		self.output = []
