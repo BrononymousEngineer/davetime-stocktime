@@ -1,6 +1,7 @@
 """Main app"""
 import components
 import data
+import options
 import utils
 import template
 import sys
@@ -41,7 +42,7 @@ PAGES = {
 	'Fundamental': template.Page,
 	'Price Data': template.Page,
 	'Analysts': template.Page,
-	'Options': template.Page,
+	'Options': options.Options,
 	'Portfolio Analysis': template.Page
 }
 
@@ -149,9 +150,10 @@ def main() -> None:
 	### Session State
 	''')
 	st.write(STATE)
-	st.markdown('''
-	### Ignore the error below
-	''')
+	if selected_page != 'Options':
+		st.markdown('''
+		### Ignore the error below
+		''')
 	PAGES[selected_page](selected_symbols, STATE).runpage()
 
 
