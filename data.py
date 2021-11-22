@@ -23,6 +23,7 @@ class SymbolData:
 	sector: str
 	industry: str
 	asset_type: str
+	country: str
 	short_name: str
 	long_name: str
 	option_chain: pd.DataFrame
@@ -51,6 +52,9 @@ class SymbolData:
 		)
 		self.industry = asset_profile.get(
 			'industry', PLACEHOLDERS[str]
+		)
+		self.country = asset_profile.get(
+			'country', PLACEHOLDERS[str]
 		)
 		self.asset_type = quote_type.get('quoteType', PLACEHOLDERS[str])
 		self.short_name = quote_type.get('shortName', PLACEHOLDERS[str])
@@ -100,11 +104,11 @@ def get_data(
 		symbol_obj = SymbolData(s)
 		failed = False
 		try:
-			update_progress(f'Retrieving metadata for {s}')
+			update_progress(f'Getting {s} metadata')
 			symbol_obj.get_metadata()
-			update_progress(f'Retrieving price history for {s}')
+			update_progress(f'Getting {s} price history')
 			symbol_obj.get_historical_prices()
-			update_progress(f'Retrieving option chain for {s}')
+			update_progress(f'Getting {s} option chain')
 			symbol_obj.get_option_chain()
 			successful.append(s)
 		except Exception as e:
