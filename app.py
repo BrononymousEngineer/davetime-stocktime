@@ -48,7 +48,8 @@ def main() -> None:
 	# --------------------------------------------------------------------------
 	sidebar = st.sidebar
 	sidebar.markdown('''
-	⬇️ Scroll down for more options, mouse over/tap the ❔ icons for help
+	##### Start here in the sidebar, from the top down.  
+	##### Mouse over (tap on mobile) any ❔ icons for help
 	''')
 	# --------------------------------------------------------------------------
 	# Symbols input/get data
