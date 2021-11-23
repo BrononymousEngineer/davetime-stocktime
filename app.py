@@ -118,8 +118,12 @@ def main() -> None:
 		default_symbols = STATE.symbols
 	else:
 		for filter_group in [
-			{'asset_type': 'Asset Type'},
-			{'home_exchange': 'Exchange'},
+			{
+				'asset_type': 'Asset Type'
+			},
+			{
+				'home_exchange': 'Exchange'
+			},
 			{
 				'sector': 'Sector',
 				'industry': 'Industry'

@@ -38,7 +38,9 @@ class Page:
 				st.markdown('''
 				##### For now this page only displays useful information for development.
 
-					- TODO: fix data errors for futures
+					- TODO: fix data errors for currencies & futures
+					- TODO: make backward pass to link filters (and symbols?)
+					- TODO: keep last symbol/filter selection in state
 				''')
 				if st.checkbox('Show session state'):
 					st.markdown('''### Session State''')
@@ -47,7 +49,9 @@ class Page:
 			st.markdown('''
 			##### For now this page only displays useful information for development.
 
-				- TODO: fix data errors for futures
+				- TODO: fix data errors for currencies & futures
+				- TODO: make backward pass to link filters (and symbols?)
+				- TODO: keep last symbol/filter selection in state
 			''')
 			if st.checkbox('Show session state'):
 				st.markdown('''### Session State''')

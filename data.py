@@ -142,5 +142,3 @@ def get_data(
 		k: STATE.symbols_data[k]
 		for k in sorted(list(STATE.symbols_data.keys()))
 	}
-
-	# return successful
