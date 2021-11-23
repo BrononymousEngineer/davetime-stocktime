@@ -27,12 +27,6 @@ if not hasattr(STATE, 'symbols'):
 	STATE.symbols = []
 if not hasattr(STATE, 'symbols_data'):
 	STATE.symbols_data = {}
-if not hasattr(STATE, 'sectors'):
-	STATE.sectors = []
-if not hasattr(STATE, 'industries'):
-	STATE.industries = []
-if not hasattr(STATE, 'asset_types'):
-	STATE.asset_types = []
 
 # ------------------------------------------------------------------------------
 # Initialize pages
