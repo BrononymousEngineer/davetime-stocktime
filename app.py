@@ -106,35 +106,27 @@ def main() -> None:
 			new_symbols.progressmsg_container,
 			STATE
 		)
-		# STATE.asset_types, STATE.sectors, STATE.industries, STATE.countries = \
-		# utils.get_all_attributes([
-		# 	'asset_type', 'sector', 'industry', 'country'
-		# ], STATE)
 		info_container.empty()
 	# --------------------------------------------------------------------------
 	# Symbols filter
 	# --------------------------------------------------------------------------
-	# if STATE.symbols:
 	select_all = filter_container.checkbox('Select All Symbols') \
 		if STATE.symbols else False
 	default_symbols = []
 	if select_all:
 		default_symbols = STATE.symbols
 	else:
-		# if STATE.sectors and STATE.industries:
 		for filter_group in [
 			{'asset_type': 'Asset Type'},
-			{
-				# 'exchange_type': 'Exchange Type',
-				'home_exchange': 'Exchange'
-			},
+			{'home_exchange': 'Exchange'},
 			{
 				'sector': 'Sector',
 				'industry': 'Industry'
 			},
 			{
 				'country': 'Country',
-				'state': 'State', 'city': 'City'
+				'state': 'State',
+				'city': 'City'
 			}
 		]:
 			default_symbols += components.SymbolsFilter(

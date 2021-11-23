@@ -1,5 +1,4 @@
 """Page template"""
-import data
 from abc import abstractmethod
 import streamlit as st
 
