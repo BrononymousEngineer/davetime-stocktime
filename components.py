@@ -1,5 +1,6 @@
 """Components built around streamlit widgets"""
 import streamlit as st
+from typing import Dict
 
 
 class SymbolsInput:
@@ -70,12 +71,32 @@ class SymbolsFilter:
 	def __init__(
 		self,
 		container: st.container,
-		struct: dict,
-		description: str = ''
+		input_objects: Dict[str, object] = None,
+		title: str = None,
+		title_importance: int = 4,
+		radio_description: str = '',
+		radio_options: dict = None
 	):
-		self.radio = container.radio(description, struct['radio'])
-		st.write(struct)
-		self.dropdown = container.multiselect(
-			f'Select {self.radio}', options=struct[self.radio]
-		)
 		self.output = []
+		if title:
+			container.markdown(f'''{"#"*title_importance} {title}''')
+		if radio_options:
+			radio = container.radio(
+				radio_description,
+				options=[x for x in radio_options.keys()],
+				format_func=lambda x: radio_options[x]
+			)
+			filter_by = container.multiselect(
+				f'{radio_options[radio]} selection:',
+				options=sorted(list({
+					getattr(x, radio) for x in input_objects.values()
+			})))
+			self.output = self._filter(input_objects, radio, filter_by)
+
+	@staticmethod
+	def _filter(input_objects, attr: str, filter_by):
+		out = []
+		for k, v in input_objects.items():
+			if getattr(v, attr) in filter_by:
+				out.append(k)
+		return out

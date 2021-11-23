@@ -24,8 +24,12 @@ class SymbolData:
 	industry: str
 	asset_type: str
 	country: str
+	state: str
+	city: str
 	short_name: str
 	long_name: str
+	exchange_type: str
+	home_exchange: str
 	option_chain: pd.DataFrame
 	historical_prices: pd.DataFrame
 
@@ -46,19 +50,18 @@ class SymbolData:
 		# YQ ENDPOINTS
 		asset_profile = self.ticker_obj.asset_profile[self.symbol]
 		quote_type = self.ticker_obj.quote_type[self.symbol]
+		price = self.ticker_obj.price[self.symbol]
 		# EXTRACT DATA FROM ENDPOINTS
-		self.sector = asset_profile.get(
-			'sector', PLACEHOLDERS[str]
-		)
-		self.industry = asset_profile.get(
-			'industry', PLACEHOLDERS[str]
-		)
-		self.country = asset_profile.get(
-			'country', PLACEHOLDERS[str]
-		)
+		for str_key in ['sector', 'industry', 'country', 'state', 'city']:
+			self.__setattr__(
+				str_key, asset_profile.get(str_key, PLACEHOLDERS[str])
+			)
+
 		self.asset_type = quote_type.get('quoteType', PLACEHOLDERS[str])
 		self.short_name = quote_type.get('shortName', PLACEHOLDERS[str])
 		self.long_name = quote_type.get('longName', PLACEHOLDERS[str])
+		self.exchange_type = price.get('exchange', PLACEHOLDERS[str])
+		self.home_exchange = price.get('exchangeName',  PLACEHOLDERS[str])
 
 	def get_fundamental_data(self) -> None:
 		"""Fundamental data"""

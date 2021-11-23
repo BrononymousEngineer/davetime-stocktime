@@ -53,26 +53,37 @@ def main() -> None:
 	# Initialize sidebar
 	# --------------------------------------------------------------------------
 	sidebar = st.sidebar
-	sidebar.markdown('''
-	##### Start here in the sidebar, from the top down.  
-	##### Mouse over (tap on mobile) any ❔ icons for help
+	# --------------------------------------------------------------------------
+	# Container setup
+	# --------------------------------------------------------------------------
+	info_container = sidebar.empty()
+	input_container = sidebar.expander(
+		'Symbols Input', expanded=False if STATE.symbols else True
+	)
+	filter_container = sidebar.expander(
+		'Symbols Filter', expanded=True if STATE.symbols else False
+	)
+	filter_container.error('''
+	Filters are not currently linked. This means the filtered symbols will meet
+	**any** of the filter criteria, not **all** criteria.
 	''')
+	filter_info_container = filter_container.empty()
+	selected_symbols_container = sidebar.container()
 	# --------------------------------------------------------------------------
 	# Symbols input/get data
 	# --------------------------------------------------------------------------
-	input_container = sidebar.expander('Symbols Input')
+	if not STATE.symbols:
+		info_container.info('Input some symbols to get started')
+		filter_info_container.info('Input some symbols to get started')
 	input_container.markdown('''
-	There are currently two ways to load data.  
-	
-	1) Upload a text file of symbols  
-	2) Manually type symbols  
-	
-	A third option will be crawling through related symbols on Yahoo
+	There are 3 ways to load data.  
+	##### 1) Upload a text file of symbols  
+	##### 2) Manually type symbols  
 	''')
+	input_container.error('''###### 3) Yahoo! Finance crawler (not added yet)''')
 	new_symbols = components.SymbolsInput(
 		form_key='new_symbols_form',
 		container=input_container,
-		# title='Symbols Input',
 		text_input_description='2) Enter ticker symbols below',
 		uploader_description='1) Upload a text file',
 		uploader_help_txt=''' 
@@ -86,83 +97,75 @@ def main() -> None:
 			Type symbols into the box below, separating each with a space, 
 			like this: AAPL AMZN GOOG. Click the button and data from Yahoo! 
 			Finance will be retrieved. This is not case sensitive. Aapl, aapl, 
-			and AaPL will all be read as AAPL.'''
+			and AaPL will all be read as AAPL.''',
 	)
 	if new_symbols.parsed_input:
 		data.get_data(
 			sorted(new_symbols.parsed_input),
-			# new_symbols.progressbar_container,
 			input_container,
 			new_symbols.progressmsg_container,
 			STATE
 		)
-		# EXTRACT METADATA FOR FILTERING
 		STATE.asset_types, STATE.sectors, STATE.industries, STATE.countries = \
 		utils.get_all_attributes([
 			'asset_type', 'sector', 'industry', 'country'
 		], STATE)
+		info_container.empty()
 	# --------------------------------------------------------------------------
 	# Symbols filter
 	# --------------------------------------------------------------------------
-	filter_container = sidebar.expander('Symbols Filter')
-	select_all = sidebar.checkbox('Select All Symbols')
-
-	selected_symbols_container = sidebar.empty()
-
+	# if STATE.symbols:
+	select_all = filter_container.checkbox('Select All Symbols') \
+		if STATE.symbols else False
 	default_symbols = []
 	if select_all:
 		default_symbols = STATE.symbols
 	else:
 		if STATE.sectors and STATE.industries:
-			sector_industry_structure = {
-				'radio': ['Sectors', 'Industries'],
-				'Sectors': STATE.sectors,
-				'Industries': STATE.industries
-			}
-			default_symbols = components.SymbolsFilter(
-				filter_container,
-				sector_industry_structure,
-				description='Filter by sector/industry'
-			).output
-
+			for filter_group in [
+				{'asset_type': 'Asset Type'},
+				{
+					'exchange_type': 'Exchange Type',
+					'home_exchange': 'Home Exchange'
+				},
+				{
+					'sector': 'Sector',
+					'industry': 'Industry'
+				},
+				{
+					'country': 'Country',
+					'state': 'State', 'city': 'City'
+				}
+			]:
+				default_symbols += components.SymbolsFilter(
+					container=filter_container,
+					input_objects=STATE.symbols_data,
+					radio_description='Filter by:',
+					radio_options=filter_group
+				).output
 	selected_symbols = selected_symbols_container.multiselect(
-		'Select symbols to view', options=STATE.symbols, default=default_symbols
+		'Select symbols to view',
+		options=STATE.symbols,
+		default=default_symbols
 	)
-	# --------------------------------------------------------------------------
-	# Run selected page
-	# --------------------------------------------------------------------------
+	# ----------------------------------------------------------------------
+	# Get page to run
+	# ----------------------------------------------------------------------
 	selected_page = sidebar.radio('Selected Page', options=PAGES.keys())
-	# --------------------------------------------------------------------------
+	# ----------------------------------------------------------------------
 	# Tail info
-	# --------------------------------------------------------------------------
+	# ----------------------------------------------------------------------
 	sidebar.markdown('''
 	##### {} symbols in session using {} of RAM
 	'''.format(
 		len(STATE.symbols_data),
 		utils.signify(sum([
 			sys.getsizeof(x) for x in STATE.symbols_data.values()
-		])))
-	)
-	# --------------------------------------------------------------------------
-	# Temporary dev info
-	# --------------------------------------------------------------------------
-	st.markdown('''
-	# DEV INFO
-	
-	For now this page only displays useful information for development.
-		
-		- symbols input works, except for Yahoo crawler
-		- filtering not yet implemented
-		- pages not yet implemented
-		
-	### Session State
-	''')
-	st.write(STATE)
-	if selected_page != 'Options':
-		st.markdown('''
-		### Ignore the error below
-		''')
-	PAGES[selected_page](selected_symbols, STATE).runpage()
+	]))))
+	# ----------------------------------------------------------------------
+	# Run selected page
+	# ----------------------------------------------------------------------
+	PAGES[selected_page](selected_symbols, STATE).runpage(STATE)
 
 
 if __name__ == '__main__':
