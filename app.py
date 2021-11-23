@@ -63,24 +63,30 @@ def main() -> None:
 	filter_container = sidebar.expander(
 		'Symbols Filter', expanded=True if STATE.symbols else False
 	)
-	filter_container.error('''
-	Filters are not currently linked. This means the filtered symbols will meet
-	**any** of the filter criteria, not **all** criteria.
-	''')
 	filter_info_container = filter_container.empty()
 	selected_symbols_container = sidebar.container()
 	# --------------------------------------------------------------------------
-	# Symbols input/get data
+	# Static text
 	# --------------------------------------------------------------------------
-	if not STATE.symbols:
-		info_container.info('Input some symbols to get started')
-		filter_info_container.info('Input some symbols to get started')
 	input_container.markdown('''
 	There are 3 ways to load data.  
 	##### 1) Upload a text file of symbols  
 	##### 2) Manually type symbols  
 	''')
 	input_container.error('''###### 3) Yahoo! Finance crawler (not added yet)''')
+	filter_container.error('''
+	Filters are not currently linked. This means the filtered symbols will meet
+	**any** of the filter criteria, not **all** criteria.
+	''')
+	input_container.markdown('''
+	You can also come back here to add more symbols at any point.
+	''')
+	# --------------------------------------------------------------------------
+	# Symbols input/get data
+	# --------------------------------------------------------------------------
+	if not STATE.symbols:
+		info_container.info('Input some symbols to get started')
+		filter_info_container.info('Input some symbols to get started')
 	new_symbols = components.SymbolsInput(
 		form_key='new_symbols_form',
 		container=input_container,
