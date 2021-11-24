@@ -94,9 +94,11 @@ class SymbolsFilter:
 			filter_by = container.multiselect(
 				f'{radio_options[radio]} selection:',
 				options=options,
-				default=[] if (
-					len(options) > 1 or filter_type in ['All', 'Exclude']
-				) else options
+				default={
+					'Any': [],
+					'All': [] if len(options) > 1 else options,
+					'Exclude': []
+				}[filter_type]
 			)
 			self.output = {
 				'Any': self._filter_any,
