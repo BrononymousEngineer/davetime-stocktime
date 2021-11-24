@@ -36,27 +36,26 @@ class Page:
 				self._multi_symbols(self.symbols)
 			else:
 				st.markdown('''
-				##### For now this page only displays useful information for development.
-
-					- TODO: fix data errors for currencies & futures
-					- TODO: make backward pass to link filters (and symbols?)
-					- TODO: keep last symbol/filter selection in state
+					### TODO
+					- make filters more general/modular
+						- let the user add/create filter criteria
+					- fix data errors for currencies & futures
+					- "clear all" filter button
+					- try to find a way to make data load FASTER (caching)
 				''')
 				if st.checkbox('Show session state'):
 					st.markdown('''### Session State''')
 					st.write(STATE)
 		except Exception as e:
 			st.markdown('''
-			##### For now this page only displays useful information for development.
-
-				- TODO: fix data errors for currencies & futures
-				- TODO: make backward pass to link filters (and symbols?)
-				- TODO: keep last symbol/filter selection in state
+				### TODO
+				- make filters more general/modular
+					- let the user add/create filter criteria
+				- fix data errors for currencies & futures
+				- "clear all" filter button
+				- try to find a way to make data load FASTER (caching)
 			''')
 			if st.checkbox('Show session state'):
 				st.markdown('''### Session State''')
 				st.write(STATE)
-			st.markdown('''
-			#### Ignore the error, page not yet finished   
-			''')
 			st.error(e)

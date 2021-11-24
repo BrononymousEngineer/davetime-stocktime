@@ -1,5 +1,6 @@
 """Components built around streamlit widgets"""
 import streamlit as st
+from copy import deepcopy
 from typing import Dict
 
 
@@ -75,7 +76,8 @@ class SymbolsFilter:
 		title: str = None,
 		title_importance: int = 4,
 		radio_description: str = '',
-		radio_options: dict = None
+		radio_options: dict = None,
+		filter_type: bool = True
 	):
 		self.output = []
 		if title:
@@ -86,17 +88,40 @@ class SymbolsFilter:
 				options=[x for x in radio_options.keys()],
 				format_func=lambda x: radio_options[x]
 			)
+			options = sorted(list({
+					getattr(x, radio) for x in input_objects.values()
+			}))
 			filter_by = container.multiselect(
 				f'{radio_options[radio]} selection:',
-				options=sorted(list({
-					getattr(x, radio) for x in input_objects.values()
-			})))
-			self.output = self._filter(input_objects, radio, filter_by)
+				options=options,
+				default=[] if len(options) > 1 else options
+			)
+			self.output = {
+				'Any': self._filter_any,
+				'All': self._filter_all,
+				'Exclude': self._filter_exclude
+			}[filter_type](input_objects, radio, filter_by)
 
 	@staticmethod
-	def _filter(input_objects, attr: str, filter_by):
+	def _filter_any(input_objects, attr: str, filter_by: list) -> list:
 		out = []
 		for k, v in input_objects.items():
 			if getattr(v, attr) in filter_by:
 				out.append(k)
 		return out
+
+	@staticmethod
+	def _filter_all(input_objects, attr: str, filter_by: list) -> list:
+		out = deepcopy(input_objects)
+		for k, v in input_objects.items():
+			if getattr(v, attr) not in filter_by:
+				del out[k]
+		return list(out.keys())
+
+	@staticmethod
+	def _filter_exclude(input_objects, attr: str, filter_by) -> list:
+		out = deepcopy(input_objects)
+		for k, v in input_objects.items():
+			if getattr(v, attr) in filter_by:
+				del out[k]
+		return list(out.keys())

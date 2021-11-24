@@ -42,7 +42,7 @@ PAGES = {
 
 
 def main() -> None:
-	"""run app"""
+	"""run app -- FYI this function is mainly sidebar setup"""
 	# --------------------------------------------------------------------------
 	# Initialize sidebar
 	# --------------------------------------------------------------------------
@@ -68,10 +68,10 @@ def main() -> None:
 	##### 2) Manually type symbols  
 	''')
 	input_container.error('''###### 3) Yahoo! Finance crawler (not added yet)''')
-	filter_container.error('''
-	Filters are not currently linked. This means the filtered symbols will meet
-	**any** of the filter criteria, not **all** criteria.
-	''')
+	# filter_container.error('''
+	# Filters are not currently linked. This means the filtered symbols will meet
+	# **any** of the filter criteria, not **all** criteria.
+	# ''')
 	input_container.markdown('''
 	You can also come back here to add more symbols at any point.
 	''')
@@ -113,33 +113,55 @@ def main() -> None:
 	# --------------------------------------------------------------------------
 	select_all = filter_container.checkbox('Select All Symbols') \
 		if STATE.symbols else False
-	default_symbols = []
+
 	if select_all:
 		default_symbols = STATE.symbols
 	else:
+		filter_type = filter_container.radio(
+			'Filter Type', options=['Any', 'All', 'Exclude'], help='''
+			"Any" means that symbols will be selected which meet ***any*** of 
+			the "Filter by:" criteria. 
+
+			"All" means that symbols will be selected only if they meet 
+			***all*** of the "Filter by:" criteria.
+
+			"Exclude" means that all symbols will be selected that ***do not***
+			meet the "Filter by:" criteria.   
+		''')
+		default_symbols = [] \
+			if filter_type == 'Any' else list(STATE.symbols_data.keys())
 		for filter_group in [
-			{
-				'asset_type': 'Asset Type'
-			},
-			{
-				'home_exchange': 'Exchange'
-			},
-			{
-				'sector': 'Sector',
-				'industry': 'Industry'
-			},
-			{
-				'country': 'Country',
-				'state': 'State',
-				'city': 'City'
-			}
+			{'asset_type': 'Asset Type'},
+			{'home_exchange': 'Exchange'},
+			{'sector': 'Sector', 'industry': 'Industry'},
+			{'country': 'Country', 'state': 'State', 'city': 'City'}
 		]:
-			default_symbols += components.SymbolsFilter(
+
+			input_objects = STATE.symbols_data if filter_type == 'Any' else \
+				{
+					k: v for k, v in STATE.symbols_data.items()
+					if k in default_symbols
+				}
+
+			symbol_group = components.SymbolsFilter(
 				container=filter_container,
-				input_objects=STATE.symbols_data,
+				input_objects=input_objects,
 				radio_description='Filter by:',
-				radio_options=filter_group
+				radio_options=filter_group,
+				filter_type=filter_type
 			).output
+
+			if filter_type == 'Any':
+				default_symbols += symbol_group
+			else:
+				default_symbols = symbol_group
+
+	if default_symbols:
+		selected_symbols_container.info('''
+		Filters that have been set will not be updated if you manually 
+		select/delete symbols from the current selection. This is being worked 
+		on.
+		''')
 	selected_symbols = selected_symbols_container.multiselect(
 		'Select symbols to view',
 		options=STATE.symbols,
@@ -148,6 +170,10 @@ def main() -> None:
 	# --------------------------------------------------------------------------
 	# Get page to run
 	# --------------------------------------------------------------------------
+	sidebar.error('''
+	None of the pages are written yet. Still working on the sidebar only.
+	The main page to the right only displays info for development purposes.
+	''')
 	selected_page = sidebar.radio('Selected Page', options=PAGES.keys())
 	# --------------------------------------------------------------------------
 	# Tail info
