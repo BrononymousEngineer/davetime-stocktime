@@ -94,7 +94,9 @@ class SymbolsFilter:
 			filter_by = container.multiselect(
 				f'{radio_options[radio]} selection:',
 				options=options,
-				default=[] if len(options) > 1 else options
+				default=[] if (
+					len(options) > 1 or filter_type in ['All', 'Exclude']
+				) else options
 			)
 			self.output = {
 				'Any': self._filter_any,
@@ -103,7 +105,9 @@ class SymbolsFilter:
 			}[filter_type](input_objects, radio, filter_by)
 
 	@staticmethod
-	def _filter_any(input_objects, attr: str, filter_by: list) -> list:
+	def _filter_any(
+		input_objects: Dict[str, object], attr: str, filter_by: list
+	) -> list:
 		out = []
 		for k, v in input_objects.items():
 			if getattr(v, attr) in filter_by:
@@ -111,7 +115,9 @@ class SymbolsFilter:
 		return out
 
 	@staticmethod
-	def _filter_all(input_objects, attr: str, filter_by: list) -> list:
+	def _filter_all(
+		input_objects: Dict[str, object], attr: str, filter_by: list
+	) -> list:
 		out = deepcopy(input_objects)
 		for k, v in input_objects.items():
 			if getattr(v, attr) not in filter_by:
@@ -119,7 +125,9 @@ class SymbolsFilter:
 		return list(out.keys())
 
 	@staticmethod
-	def _filter_exclude(input_objects, attr: str, filter_by) -> list:
+	def _filter_exclude(
+		input_objects: Dict[str, object], attr: str, filter_by
+	) -> list:
 		out = deepcopy(input_objects)
 		for k, v in input_objects.items():
 			if getattr(v, attr) in filter_by:
