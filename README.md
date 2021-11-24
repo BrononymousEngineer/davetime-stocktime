@@ -1,1 +1,1 @@
-App currently deployed [here](https://share.streamlit.io/brononymousengineer/davetime-stocktime/app.py)
+[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://share.streamlit.io/brononymousengineer/davetime-stocktime/app.py)
