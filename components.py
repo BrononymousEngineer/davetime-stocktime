@@ -67,7 +67,7 @@ class SymbolsInput:
 		self.parsed_input = [
 			x for x in self.__parse_text_input(self.text_input, case, sep)
 			if x != ''
-		] or self.__parse_text_file() or self.__crawl_yahoo()
+		] or self.__parse_text_file() or self.__crawl_yahoo(input_type)
 
 	@staticmethod
 	def __parse_text_input(text_input: st.text_input, c: str, s: str) -> list:
@@ -81,8 +81,9 @@ class SymbolsInput:
 				uploader.getvalue().decode('utf-8').upper().split()
 			]
 
-	def __crawl_yahoo(self):
-		self.container.error('Crawl Yahoo in progress')
+	def __crawl_yahoo(self, input_type: str):
+		if input_type == 'Crawl Yahoo! Finance':
+			self.container.error('Crawl Yahoo in progress')
 
 
 class SymbolsFilter:

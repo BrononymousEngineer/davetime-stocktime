@@ -1,4 +1,23 @@
-"""Page template"""
+"""Page template
+
+Usage
+-----
+import template
+import streamlit as st
+
+
+class ExamplePage(template.Page):
+
+	def _single_symbol(self, symbol: str):
+		# your code here
+
+	def _multi_symbols(self, symbols: list):
+		# your code here
+
+
+"""
+import utils
+
 from abc import abstractmethod
 import streamlit as st
 
@@ -9,6 +28,7 @@ class Page:
 	def __init__(self, symbols: list, STATE: st.session_state):
 		self.symbols = symbols
 		self.STATE = STATE
+		self.data = utils.concat_data(STATE.symbols_data)
 
 	@abstractmethod
 	def _single_symbol(self, symbol: str):

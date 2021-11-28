@@ -1,4 +1,5 @@
 """Main app"""
+import analysis
 import components
 import data
 import options
@@ -36,7 +37,7 @@ PAGES = {
 	'Price Data': price.Price,
 	'Analysts': template.Page,
 	'Options': options.Options,
-	'Portfolio Analysis': template.Page
+	'Portfolio Analysis': analysis.Analysis
 }
 
 
