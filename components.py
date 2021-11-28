@@ -29,20 +29,29 @@ class SymbolsInput:
 			submit_button_clears: bool = True,
 			parsed_case: str = 'upper'
 	):
+		self.container = container
+		input_type = container.radio(
+			'Choose an input method', options=[
+				'Manual input', 'Upload a text file', 'Crawl Yahoo! Finance'
+		])
 		self.form = container.form(
 			key=form_key, clear_on_submit=submit_button_clears
 		)
 		self.title = None if not title else self.form.markdown(
 			f'{"#"*title_importance} {title}'
 		)
-		self.uploader = self.form.file_uploader(
-			label=uploader_description if uploader_description else '',
-			help=uploader_help_txt if uploader_help_txt else ''
-		)
-		self.text_input = self.form.text_input(
-			label=text_input_description if text_input_description else '',
-			help=text_input_help_txt if text_input_help_txt else ''
-		)
+		self.uploader = None
+		if input_type == 'Upload a text file':
+			self.uploader = self.form.file_uploader(
+				label=uploader_description if uploader_description else '',
+				help=uploader_help_txt if uploader_help_txt else ''
+			)
+		self.text_input = ''
+		if input_type == 'Manual input':
+			self.text_input = self.form.text_input(
+				label=text_input_description if text_input_description else '',
+				help=text_input_help_txt if text_input_help_txt else ''
+			)
 		self.button = self.form.form_submit_button(
 			submit_button_text if submit_button_text else ''
 		)
@@ -58,7 +67,7 @@ class SymbolsInput:
 		self.parsed_input = [
 			x for x in self.__parse_text_input(self.text_input, case, sep)
 			if x != ''
-		] or self.__parse_text_file()
+		] or self.__parse_text_file() or self.__crawl_yahoo()
 
 	@staticmethod
 	def __parse_text_input(text_input: st.text_input, c: str, s: str) -> list:
@@ -71,6 +80,9 @@ class SymbolsInput:
 				x.strip(' ') for x in
 				uploader.getvalue().decode('utf-8').upper().split()
 			]
+
+	def __crawl_yahoo(self):
+		self.container.error('Crawl Yahoo in progress')
 
 
 class SymbolsFilter:

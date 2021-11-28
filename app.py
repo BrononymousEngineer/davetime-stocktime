@@ -66,11 +66,6 @@ def main() -> None:
 	##### 1) Upload a text file of symbols  
 	##### 2) Manually type symbols  
 	''')
-	input_container.error('''###### 3) Yahoo! Finance crawler (not added yet)''')
-	# filter_container.error('''
-	# Filters are not currently linked. This means the filtered symbols will meet
-	# **any** of the filter criteria, not **all** criteria.
-	# ''')
 	input_container.markdown('''
 	You can also come back here to add more symbols at any point.
 	''')
@@ -83,8 +78,8 @@ def main() -> None:
 	new_symbols = components.SymbolsInput(
 		form_key='new_symbols_form',
 		container=input_container,
-		text_input_description='2) Enter ticker symbols below',
-		uploader_description='1) Upload a text file',
+		text_input_description='Enter ticker symbols below',
+		uploader_description='Upload a text file',
 		uploader_help_txt=''' 
 			File must be .txt format (if you are using Windows, this means open 
 			up Notepad...for Mac, TextEdit) and type only one symbol per line. 
