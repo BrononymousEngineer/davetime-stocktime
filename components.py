@@ -180,10 +180,12 @@ class TimeSeriesChart:
 				'adjclose', 'open', 'high', 'low', 'close'
 			]),
 			checkbox_container.checkbox(
-				'Normalize', value=True if len(symbols) > 1 else False
+				'Normalize', value=True if len(symbols) > 1 else False,
+				help='Current data point divided by the first data point'
 			),
-			checkbox_container.checkbox('Log Y-Axis')
-		)
+			checkbox_container.checkbox(
+				'Log Y-Var', help='Calculates the log of the y-variable'
+		))
 
 	def _filter_dates(self, data: pd.DataFrame, time_period: str) -> tuple:
 		dates = [x[1] for x in data.index]
