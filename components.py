@@ -229,8 +229,8 @@ class TimeSeriesChart:
 
 		for i, s in enumerate(symbols):
 			data = self.data.loc[s]
-			datum = data['open'].iloc[0]
 			if plot_type == 'OHLC':
+				datum = data['open'].iloc[0]
 				if i == 0:
 					color_inc = None
 					color_dec = None
@@ -251,6 +251,7 @@ class TimeSeriesChart:
 					)
 				)
 			elif plot_type == 'line':
+				datum = data[price_type].iloc[0]
 				fig.add_scatter(
 					name=s, x=data.index,
 					y={
