@@ -184,7 +184,7 @@ class TimeSeriesChart:
 				help='Current data point divided by the first data point'
 			),
 			checkbox_container.checkbox(
-				'Log Y-Var', help='Calculates the log of the y-variable'
+				'Log Y-Axis', help='Plots the y-variable on a logarithmic axis'
 		))
 
 	def _filter_dates(self, data: pd.DataFrame, time_period: str) -> tuple:
@@ -216,8 +216,7 @@ class TimeSeriesChart:
 		fig = go.Figure()
 
 		def _normalize(datum: float, data: pd.Series):
-			data = data / datum if norm else data
-			return np.log(data) if log else data
+			return data / datum if norm else data
 
 		colors_inc = [
 			'aliceblue',
@@ -271,7 +270,8 @@ class TimeSeriesChart:
 						'adjclose': _normalize(datum, data['adjclose'])
 					}[price_type]
 				)
-
+		if log:
+			fig.update_yaxes(type="log")
 		fig.update_layout(
 			height=600,
 			xaxis_rangeslider_visible=False,
