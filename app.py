@@ -3,9 +3,7 @@ import components
 import data
 import options
 import price
-import utils
 import template
-import sys
 
 import streamlit as st
 
@@ -168,21 +166,13 @@ def main() -> None:
 		options=STATE.symbols_data.keys(),
 		default=default_symbols
 	)
+	sidebar.markdown(f'''
+	##### {len(selected_symbols)} / {len(STATE.symbols_data)} symbols selected
+	''')
 	# --------------------------------------------------------------------------
 	# Get page to run
 	# --------------------------------------------------------------------------
 	selected_page = sidebar.radio('Selected Page', options=PAGES.keys())
-	# --------------------------------------------------------------------------
-	# Tail info
-	# --------------------------------------------------------------------------
-	sidebar.markdown('''
-	##### {} symbols in session using {} of RAM
-	'''.format(
-		len(STATE.symbols_data),
-		utils.signify(sum([
-			# sys.getsizeof(x) for x in STATE.symbols_data.values()
-			sys.getsizeof(x) for x in dir()
-	]))))
 	# --------------------------------------------------------------------------
 	# Run selected page
 	# --------------------------------------------------------------------------
