@@ -2,6 +2,7 @@
 import components
 import data
 import options
+import price
 import utils
 import template
 import sys
@@ -34,7 +35,7 @@ if not hasattr(STATE, 'symbols_data'):
 PAGES = {
 	'Overview': template.Page,
 	'Fundamental': template.Page,
-	'Price Data': template.Page,
+	'Price Data': price.Price,
 	'Analysts': template.Page,
 	'Options': options.Options,
 	'Portfolio Analysis': template.Page
@@ -52,10 +53,10 @@ def main() -> None:
 	# --------------------------------------------------------------------------
 	info_container = sidebar.empty()
 	input_container = sidebar.expander(
-		'Symbols Input', expanded=False if STATE.symbols else True
+		'Symbols Input', expanded=False if STATE.symbols_data else True
 	)
 	filter_container = sidebar.expander(
-		'Symbols Filter', expanded=True if STATE.symbols else False
+		'Symbols Filter', expanded=True if STATE.symbols_data else False
 	)
 	filter_info_container = filter_container.empty()
 	selected_symbols_container = sidebar.container()
@@ -78,7 +79,7 @@ def main() -> None:
 	# --------------------------------------------------------------------------
 	# Symbols input/get data
 	# --------------------------------------------------------------------------
-	if not STATE.symbols:
+	if not STATE.symbols_data:
 		info_container.info('Input some symbols to get started')
 		filter_info_container.info('Input some symbols to get started')
 	new_symbols = components.SymbolsInput(
@@ -112,10 +113,10 @@ def main() -> None:
 	# Symbols filter
 	# --------------------------------------------------------------------------
 	select_all = filter_container.checkbox('Select All Symbols') \
-		if STATE.symbols else False
+		if STATE.symbols_data else False
 
 	if select_all:
-		default_symbols = STATE.symbols
+		default_symbols = STATE.symbols_data.keys()
 	else:
 		filter_type = filter_container.radio(
 			'Filter Type', options=['Any', 'All', 'Exclude'], help='''
@@ -164,16 +165,12 @@ def main() -> None:
 		''')
 	selected_symbols = selected_symbols_container.multiselect(
 		'Select symbols to view',
-		options=STATE.symbols,
+		options=STATE.symbols_data.keys(),
 		default=default_symbols
 	)
 	# --------------------------------------------------------------------------
 	# Get page to run
 	# --------------------------------------------------------------------------
-	sidebar.error('''
-	None of the pages are written yet. Still working on the sidebar only.
-	The main page to the right only displays info for development purposes.
-	''')
 	selected_page = sidebar.radio('Selected Page', options=PAGES.keys())
 	# --------------------------------------------------------------------------
 	# Tail info
@@ -183,7 +180,8 @@ def main() -> None:
 	'''.format(
 		len(STATE.symbols_data),
 		utils.signify(sum([
-			sys.getsizeof(x) for x in STATE.symbols_data.values()
+			# sys.getsizeof(x) for x in STATE.symbols_data.values()
+			sys.getsizeof(x) for x in dir()
 	]))))
 	# --------------------------------------------------------------------------
 	# Run selected page

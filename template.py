@@ -8,6 +8,7 @@ class Page:
 
 	def __init__(self, symbols: list, STATE: st.session_state):
 		self.symbols = symbols
+		self.STATE = STATE
 
 	@abstractmethod
 	def _single_symbol(self, symbol: str):
@@ -16,16 +17,16 @@ class Page:
 			'need to implement ' +
 			'_single_symbol(self, symbol: str) in class: {}'.format(
 				self.__class__.__name__
-		))
+			))
 
 	@abstractmethod
 	def _multi_symbols(self, symbols: list):
 		"""Run a single or multi symbol page"""
 		raise NotImplementedError(
-			'need to implement '+
+			'need to implement ' +
 			'_multi_symbols(self, symbols: list) in class: {}'.format(
 				self.__class__.__name__
-		))
+			))
 
 	def runpage(self, STATE: st.session_state):
 		"""Display the page"""
@@ -36,7 +37,8 @@ class Page:
 				self._multi_symbols(self.symbols)
 			else:
 				st.markdown('''
-					### TODO
+					### Page not finished   
+					TODO
 					- make filters more general/modular
 						- let the user add/create filter criteria
 					- fix data errors for currencies & futures
@@ -48,7 +50,8 @@ class Page:
 					st.write(STATE)
 		except Exception as e:
 			st.markdown('''
-				### TODO
+				### Page not finished   
+				TODO
 				- make filters more general/modular
 					- let the user add/create filter criteria
 				- fix data errors for currencies & futures

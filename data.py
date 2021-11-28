@@ -1,5 +1,6 @@
 """Handle data"""
 import datetime as dt
+
 import pandas as pd
 import streamlit as st
 import yahooquery as yq
