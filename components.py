@@ -2,6 +2,7 @@
 import random
 
 import datetime as dt
+import numpy as np
 import plotly.graph_objs as go
 import pandas as pd
 import streamlit as st
@@ -153,6 +154,7 @@ class TimeSeriesChart:
 		"""
 		self.container = container
 		columns = self.container.columns(4)
+		checkbox_container = columns[3].container()
 		start_date, end_date = self._filter_dates(
 			data, columns[0].selectbox(
 				'Select a time period',
@@ -177,9 +179,11 @@ class TimeSeriesChart:
 			columns[2].selectbox('Select a price type (for lines)', [
 				'adjclose', 'open', 'high', 'low', 'close'
 			]),
-			columns[3].checkbox(
+			checkbox_container.checkbox(
 				'Normalize', value=True if len(symbols) > 1 else False
-		))
+			),
+			checkbox_container.checkbox('Log Y-Axis')
+		)
 
 	def _filter_dates(self, data: pd.DataFrame, time_period: str) -> tuple:
 		dates = [x[1] for x in data.index]
@@ -203,12 +207,15 @@ class TimeSeriesChart:
 				min_date = max_date - time_deltas[time_period]
 		return min_date, max_date
 
-	def _plot_time_series(self, plot_type: str, price_type: str, norm: bool):
+	def _plot_time_series(
+		self, plot_type: str, price_type: str, norm: bool, log: bool
+	):
 		symbols = self.symbols
 		fig = go.Figure()
 
 		def _normalize(datum: float, data: pd.Series):
-			return data / datum if norm else data
+			data = data / datum if norm else data
+			return np.log(data) if log else data
 
 		colors_inc = [
 			'aliceblue',
