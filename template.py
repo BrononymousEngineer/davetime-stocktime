@@ -28,7 +28,7 @@ class Page:
 	def __init__(self, symbols: list, STATE: st.session_state):
 		self.symbols = symbols
 		self.STATE = STATE
-		self.data = utils.concat_data(STATE.symbols_data)
+		self.data = utils.concat_obj_data(STATE.symbols_data)
 
 	@abstractmethod
 	def _single_symbol(self, symbol: str):

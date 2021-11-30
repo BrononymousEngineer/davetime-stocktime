@@ -32,10 +32,10 @@ if not hasattr(STATE, 'symbols_data'):
 # Initialize pages
 # ------------------------------------------------------------------------------
 PAGES = {
-	'Overview': template.Page,
-	'Fundamental': template.Page,
+	# 'Overview': template.Page,
+	# 'Fundamental': template.Page,
 	'Price Data': price.Price,
-	'Analysts': template.Page,
+	# 'Analysts': template.Page,
 	'Options': options.Options,
 	'Portfolio Analysis': analysis.Analysis
 }
@@ -51,25 +51,14 @@ def main() -> None:
 	# Container setup
 	# --------------------------------------------------------------------------
 	info_container = sidebar.empty()
-	input_container = sidebar.expander(
-		'Symbols Input', expanded=False if STATE.symbols_data else True
-	)
-	filter_container = sidebar.expander(
-		'Symbols Filter', expanded=True if STATE.symbols_data else False
-	)
+	input_container = sidebar.expander('Symbols Input', expanded=False)
+	filter_container = sidebar.expander('Symbols Filter', expanded=False)
 	filter_info_container = filter_container.empty()
 	selected_symbols_container = sidebar.container()
 	# --------------------------------------------------------------------------
 	# Static text
 	# --------------------------------------------------------------------------
-	input_container.markdown('''
-	There are 3 ways to load data.  
-	##### 1) Upload a text file of symbols  
-	##### 2) Manually type symbols  
-	''')
-	input_container.markdown('''
-	You can also come back here to add more symbols at any point.
-	''')
+
 	# --------------------------------------------------------------------------
 	# Symbols input/get data
 	# --------------------------------------------------------------------------

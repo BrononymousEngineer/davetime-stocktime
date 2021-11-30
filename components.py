@@ -2,7 +2,6 @@
 import random
 
 import datetime as dt
-import numpy as np
 import plotly.graph_objs as go
 import pandas as pd
 import streamlit as st
@@ -160,14 +159,21 @@ class TimeSeriesChart:
 	"""Plotly chart(s) with some controls"""
 
 	def __init__(
-		self, container: st.container, symbols: list, data: pd.DataFrame
+		self,
+		container: st.container,
+		symbols: list,
+		data: pd.DataFrame,
+		plot_type_controls: bool = True,
+		price_type_controls: bool = True,
+		normalize_control: bool = True
 	):
 		"""Note: data is a MultiIndex dataframe.
 		There are two indices: symbol and dt.datetime.
 		"""
 		self.container = container
-		columns = self.container.columns(4)
-		checkbox_container = columns[3].container()
+		num_cols = 2 + price_type_controls + plot_type_controls
+		columns = self.container.columns(num_cols)
+		checkbox_container = columns[num_cols - 1].container()
 		start_date, end_date = self._filter_dates(
 			data, columns[0].selectbox(
 				'Select a time period',
@@ -177,6 +183,7 @@ class TimeSeriesChart:
 					'3mo',
 					'1mo',
 					'1wk',
+					'2Y',
 					'5Y',
 					'10Y',
 					'all',
@@ -187,16 +194,24 @@ class TimeSeriesChart:
 			x for x in data.index
 			if (x[1] >= start_date) and (x[1] <= end_date)
 		]]
-		self._plot_time_series(
-			columns[1].selectbox('Select a plot type', ['line', 'OHLC']),
-			columns[2].selectbox('Select a price type (for lines)', [
+		plot_type = \
+			columns[1].selectbox(
+				'Select a plot type', ['line', 'OHLC'],
+				help='Select "OHLC" again to regenerate candle colors'
+			) \
+			if plot_type_controls else 'line'
+		price_type = \
+			columns[
+				2 if plot_type_controls else 1
+			].selectbox('Select a price type (for lines)', [
 				'adjclose', 'open', 'high', 'low', 'close'
-			]),
-			checkbox_container.checkbox(
+			]) if plot_type_controls else 'adjclose'
+		norm = checkbox_container.checkbox(
 				'Normalize', value=True if len(symbols) > 1 else False,
 				help='Current data point divided by the first data point'
-			),
-			checkbox_container.checkbox(
+			) if normalize_control else True
+		self.data = self._plot_time_series(
+			plot_type, price_type, norm, checkbox_container.checkbox(
 				'Log Y-Axis', help='Plots the y-variable on a logarithmic axis'
 		))
 
@@ -207,6 +222,7 @@ class TimeSeriesChart:
 		time_deltas = {
 			'10Y': dt.timedelta(days=365*10),
 			'5Y': dt.timedelta(days=365*5),
+			'2Y': dt.timedelta(days=365*2),
 			'1Y': dt.timedelta(days=365*1),
 			'6mo': dt.timedelta(days=int(365*0.5)),
 			'3mo': dt.timedelta(days=int(365*0.25)),
@@ -222,11 +238,27 @@ class TimeSeriesChart:
 				min_date = max_date - time_deltas[time_period]
 		return min_date, max_date
 
+	def add_line(self, series: pd.Series):
+		"""Note: only works with adjclose"""
+		# self.fig.add_scatter(
+		# 	name='Weighted Portfolio',
+		# 	x=series.index,
+		# 	y=series.values
+		# )
+		# st.write(self.fig)
+		self.chart_container.plotly_chart(
+			figure_or_data=self.fig.add_scatter(
+			name='Weighted Portfolio',
+			x=series.index,
+			y=series.values
+		), use_container_width=True)
+
 	def _plot_time_series(
 		self, plot_type: str, price_type: str, norm: bool, log: bool
-	):
+	) -> pd.DataFrame:
 		symbols = self.symbols
 		fig = go.Figure()
+		out = {}
 
 		def _normalize(datum: float, data: pd.Series):
 			return data / datum if norm else data
@@ -250,6 +282,20 @@ class TimeSeriesChart:
 
 		for i, s in enumerate(symbols):
 			data = self.data.loc[s]
+			datum = data[{
+				'line': price_type, 'OHLC': 'open'
+			}[plot_type]].iloc[0]
+			_open = _normalize(datum, data['open'])
+			_high = _normalize(datum, data['high'])
+			_low = _normalize(datum, data['low'])
+			_close = _normalize(datum, data['close'])
+			_adjclose = _normalize(datum, data['adjclose'])
+			data['open'] = _open
+			data['high'] = _high
+			data['low'] = _low
+			data['close'] = _close
+			data['adjclose'] = _adjclose
+			out[s] = data
 			if plot_type == 'OHLC':
 				datum = data['open'].iloc[0]
 				if i == 0:
@@ -260,10 +306,7 @@ class TimeSeriesChart:
 					color_dec = random.choice(colors_dec)
 				fig.add_candlestick(
 					name=s, x=data.index,
-					open=_normalize(datum, data['open']),
-					high=_normalize(datum, data['high']),
-					low=_normalize(datum, data['low']),
-					close=_normalize(datum, data['close']),
+					open=_open, high=_high, low=_low, close=_close,
 					increasing=go.candlestick.Increasing(
 						fillcolor=color_inc, line={'color': color_inc}
 					),
@@ -276,11 +319,11 @@ class TimeSeriesChart:
 				fig.add_scatter(
 					name=s, x=data.index,
 					y={
-						'open': _normalize(datum, data['open']),
-						'high': _normalize(datum, data['high']),
-						'low': _normalize(datum, data['low']),
-						'close': _normalize(datum, data['close']),
-						'adjclose': _normalize(datum, data['adjclose'])
+						'open': _open,
+						'high': _high,
+						'low': _low,
+						'close': _close,
+						'adjclose': _adjclose
 					}[price_type]
 				)
 		if log:
@@ -290,6 +333,11 @@ class TimeSeriesChart:
 			xaxis_rangeslider_visible=False,
 			hovermode='x', showlegend=True, template='seaborn'
 		)
-		self.container.plotly_chart(
+		self.chart_container = self.container.empty()
+		self.chart_container.plotly_chart(
 			figure_or_data=fig, use_container_width=True
+		)
+		self.fig = fig
+		return pd.concat(
+			{k: v for k, v in out.items()}, keys=out.keys()
 		)

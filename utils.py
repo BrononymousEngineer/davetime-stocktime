@@ -6,6 +6,7 @@ from typing import List
 import pandas as pd
 import streamlit as st
 
+
 def signify(n, unit_type: str = 'bytes'):
 	"""Human readable number to largest significance.
 	Kinda stole this from stackoverflow.
@@ -40,8 +41,9 @@ def get_all_attributes(attrs: List[str], STATE: st.session_state) -> List[list]:
 	]
 
 
-def concat_data(data: dict) -> pd.DataFrame:
+def concat_obj_data(data: dict) -> pd.DataFrame:
 	"""Turn a dict of dataframes into a MultiIndex dataframe"""
-	return pd.concat(
-		{x: data[x].historical_prices for x in data.keys()}, keys=data.keys()
-	)
+	if data:
+		return pd.concat(
+			{x: data[x].historical_prices for x in data.keys()}, keys=data.keys()
+		)
