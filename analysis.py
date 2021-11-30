@@ -19,7 +19,7 @@ class Analysis(template.Page):
 		for s in self.symbols:
 			cols = st.columns(max_cols) if i == 0 else cols
 			weights[s] = cols[i].number_input(
-				s, step=0.1, min_value=-1, max_value=1
+				s, step=0.1, min_value=-1.0, max_value=1.0
 			)
 			i += 1 if i < max_cols - 1 else -(max_cols - 1)
 		return {s: w for s, w in weights.items() if w != 0}
